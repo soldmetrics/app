@@ -8,12 +8,16 @@ import { api } from '@config/api';
 type AuthType = {
   user: any;
   setUser: (user: any) => void;
+  resetPassword: any;
+  setResetPassword: (info: any) => void;
   isReady: boolean;
 }
 
 const AuthContext = createContext<AuthType>({
   user: null,
   setUser: () => {},
+  resetPassword: null,
+  setResetPassword: () => {},
   isReady: false,
 });
 
@@ -39,6 +43,7 @@ function useProtectedRoute(user: any) {
 
 export function AuthProvider({ children }: { children: JSX.Element }): JSX.Element {
   const [user, setUser] = useState<any | null>(null);
+  const [resetPassword, setResetPassword] = useState<any | null>(null);
   const [isReady, setIsReady] = useState(false);
 
   useEffect(() => {
@@ -82,6 +87,8 @@ export function AuthProvider({ children }: { children: JSX.Element }): JSX.Eleme
   const authContext: AuthType = {
     user,
     setUser,
+    resetPassword,
+    setResetPassword,
     isReady,
   };
 

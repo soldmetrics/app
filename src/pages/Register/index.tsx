@@ -27,7 +27,6 @@ export default function RegisterPage() {
 
   const onSubmitForm = async (values: any) => {
     try {
-      await new Promise(resolve => setTimeout(resolve, 5000));
       const firstName = values.name.split(' ').slice(0, -1).join(' ');
       const lastName = values.name.split(' ').slice(-1).join(' ');
       const user = {
