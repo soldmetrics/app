@@ -24,7 +24,6 @@ export default function LoginPage() {
 
   const onSubmitForm = async (values: any) => {
     try {
-      // await new Promise(resolve => setTimeout(resolve, 5000));
       const { data: result } = await api.post("/auth/login", {
         email: values.email,
         password: values.password,
@@ -36,7 +35,6 @@ export default function LoginPage() {
 
       console.log(result);
 
-      // Implementar global state user
       setUser(result.user);
     } catch (err: any) {
       console.log(err);

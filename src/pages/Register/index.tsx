@@ -1,6 +1,9 @@
 import { GestureResponderEvent } from "react-native";
 import { useFormik } from "formik";
 import * as Yup from "yup";
+import { Toast } from "react-native-toast-notifications";
+import AsyncStorage from "@react-native-async-storage/async-storage";
+import { router } from "expo-router";
 
 import HeaderInfos from "@components/HeaderInfos";
 import FormItem from "@components/FormItem";
@@ -10,7 +13,6 @@ import InputCheckbox from "@components/InputCheckbox";
 import { api } from "@config/api";
 
 import { Body, Footer, Wrapper } from "./styles";
-import { Toast } from "react-native-toast-notifications";
 
 export default function RegisterPage() {
   const signupSchema = Yup.object().shape({
@@ -36,9 +38,13 @@ export default function RegisterPage() {
         phone: "11941073078",
       };
 
-      const result = await api.post("/auth/register", {
+      const { data: result } = await api.post("/auth/register", {
         user,
       });
+
+      await AsyncStorage.setItem('accessToken', result?.accessToken);
+      // await AsyncStorage.setItem('refreshToken', result?.refreshToken);
+      router.push("dashboard");
 
       console.log(result);
     } catch (err: any) {
