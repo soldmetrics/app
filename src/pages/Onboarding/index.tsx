@@ -1,35 +1,33 @@
 import { useMemo, useState } from 'react';
 import { Dimensions } from 'react-native';
+import { Link } from 'expo-router';
 
-import CarouselItem from '../../components/CarouselItem';
-import ButtonPrimary from '../../components/ButtonPrimary';
-import ButtonSecundary from '../../components/ButtonSecundary';
-import { useTheme } from '../../context/ThemeProvider';
+import CarouselItem from '@components/CarouselItem';
+import ButtonPrimary from '@components/ButtonPrimary';
+import ButtonSecundary from '@components/ButtonSecundary';
+import { useTheme } from '@context/ThemeProvider';
 
 import { CarouselCustom, Logo, PaginationCustom, Wrapper, WrapperButtons, WrapperContent } from './styles';
-import { Link } from 'expo-router';
 
 const SLIDER_WIDTH = Dimensions.get('window').width;
 const SLIDER_HEIGHT = Dimensions.get('window').height;
 
 const data = [
-  { title: 'Controle as sua vendas em um só lugar', description: 'Simplifique suas finanças e conquiste a estabilidade financeira que você merece!"', image: require('../../../assets/illustrations1.png') },
-  { title: 'Todas as sua vendas em um só lugar', description: 'Simplifique suas finanças e conquiste a estabilidade financeira que você merece!"', image: require('../../../assets/illustrations2.png') },
-  { title: 'Todas as sua vendas em um só lugar', description: 'Simplifique suas finanças e conquiste a estabilidade financeira que você merece!"', image: require('../../../assets/illustrations3.png') },
+  { title: 'Controle as sua vendas em um só lugar', description: 'Simplifique suas finanças e conquiste a estabilidade financeira que você merece!"', image: require('@assets/images/illustrations1.png') },
+  { title: 'Todas as sua vendas em um só lugar', description: 'Simplifique suas finanças e conquiste a estabilidade financeira que você merece!"', image: require('@assets/images/illustrations2.png') },
+  { title: 'Todas as sua vendas em um só lugar', description: 'Simplifique suas finanças e conquiste a estabilidade financeira que você merece!"', image: require('@assets/images/illustrations3.png') },
 ];
 
 export default function OnboardingPage() {
   const [activeSlide, setActiveSlide] = useState(0);
   const { currentTheme } = useTheme();
 
-  console.log('currentTheme: ', currentTheme);
-
   const logoSource = useMemo(() => {
     if (currentTheme === 'dark') {
-      return require('../../../assets/iconDark.svg');
+      return require('@assets/iconDark.svg');
     }
 
-    return require('../../../assets/iconLight.svg');
+    return require('@assets/iconLight.svg');
   }, [currentTheme]);
 
   return (
@@ -71,14 +69,16 @@ export default function OnboardingPage() {
         />
       </WrapperContent>
       <WrapperButtons>
-        <Link href="/login" asChild>
+        <Link href="/register" asChild>
           <ButtonPrimary>
             Cadastrar-se
           </ButtonPrimary>
         </Link>
-        <ButtonSecundary>
-          Entrar
-        </ButtonSecundary>
+        <Link href="/login" asChild>
+          <ButtonSecundary>
+            Entrar
+          </ButtonSecundary>
+        </Link>
       </WrapperButtons>
     </Wrapper>
   );

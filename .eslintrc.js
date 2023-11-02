@@ -11,6 +11,8 @@ module.exports = {
     'plugin:@typescript-eslint/eslint-recommended',
     'plugin:@typescript-eslint/recommended',
     'plugin:@typescript-eslint/recommended-requiring-type-checking',
+    'universe',
+    'universe/native',
   ],
   'overrides': [
     {
@@ -29,13 +31,14 @@ module.exports = {
   'parserOptions': {
     'ecmaVersion': 'latest',
     'sourceType': 'module',
-    'projetct': './tsconfig.json'
+    'projetct': 'tsconfig.json'
   },
   'plugins': [
     '@typescript-eslint',
     'react',
     '@typescript-eslint',
     'prettier',
+    'import',
   ],
   'rules': {
     'prettier/prettier': 'error',
@@ -54,6 +57,22 @@ module.exports = {
     'semi': [
       'error',
       'always'
-    ]
-  }
+    ],
+    'import/order': 0,
+    'react-native/no-inline-styles': 0,
+    'import/namespace': 0,
+    'no-duplicate-imports': 'error',
+  },
+  "settings": {
+    "import/parsers": {
+      "@typescript-eslint/parser": [".ts"],
+    },
+    "import/internal-regex": "^@",
+    "import/resolver": {
+      "alias": {
+        "map": ["@", "./src"],
+        "extensions": [".ts", ".tsx"],
+      }
+    }
+  },
 };

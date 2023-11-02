@@ -1,13 +1,17 @@
-import { Text, Wrapper } from "./styles";
+import { TouchableOpacityProps } from "react-native";
+
+import { Spinner, Text, Wrapper } from "./styles";
 
 type ButtonPrimaryProps = {
   children: string;
-};
+  loading?: boolean;
+} & TouchableOpacityProps;
 
-export default function ButtonPrimary({ children }: ButtonPrimaryProps) {
+export default function ButtonPrimary({ children, loading = false, ...props }: ButtonPrimaryProps) {
   return (
-    <Wrapper>
-      <Text>
+    <Wrapper {...props}>
+      {loading && <Spinner />}
+      <Text {...props}>
         {children}
       </Text>
     </Wrapper>

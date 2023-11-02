@@ -1,4 +1,4 @@
-import Onboarding from "../src/pages/Onboarding";
+import Onboarding from "@pages/Onboarding";
 
 export default function OnboardingRoute() {
   return <Onboarding />;

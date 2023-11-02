@@ -1,9 +1,5 @@
-import { Title, Wrapper } from "./styles";
+import { Redirect } from "expo-router";
 
-export default function Home() {
-  return (
-    <Wrapper>
-      <Title>Opa, entrou aqui</Title>
-    </Wrapper>
-  );
+export default function HomePage() {
+  return <Redirect href="onboarding" />;
 };

@@ -15,3 +15,5 @@ export const Text = styled.Text`
   font-size: 14px;
   line-height: 22px;
 `;
+
+export const Spinner = styled.ActivityIndicator``;
