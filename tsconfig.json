@@ -25,6 +25,12 @@
       ],
       "@theme/*": [
         "src/theme/*"
+      ],
+      "@store/*": [
+        "src/store/*"
+      ],
+      "@slices/*": [
+        "src/slices/*"
       ]
     }
   }

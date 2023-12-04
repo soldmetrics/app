@@ -1,5 +1,6 @@
-import { GestureResponderEvent } from "react-native";
-import { useFormik } from "formik";
+import { useEffect } from "react";
+import { yupResolver } from "@hookform/resolvers/yup";
+import { Controller, useForm } from "react-hook-form";
 import * as Yup from "yup";
 import { router } from "expo-router";
 import { Toast } from "react-native-toast-notifications";
@@ -16,11 +17,24 @@ import { Body, Footer, Wrapper } from "./styles";
 export default function ForgotPasswordPage() {
   const { setResetPassword } = useAuth();
 
-  const ForgotPasswordSchema = Yup.object().shape({
+  const validationSchema = Yup.object().shape({
     email: Yup.string().email("E-mail inválido").required("E-mail é obrigatório"),
   });
 
-  const onSubmitForm = async (values: any) => {
+  const {
+    control,
+    register,
+    handleSubmit,
+    formState: { errors, isSubmitting, isValid }
+  } = useForm({
+    resolver: yupResolver(validationSchema),
+  });
+
+  useEffect(() => {
+    register('email');
+  }, [register]);
+
+  const onSubmit = async (values: any) => {
     try {
       const { data: result } = await api.post(`/auth/reset-password?email=${values.email}`);
 
@@ -36,45 +50,44 @@ export default function ForgotPasswordPage() {
 
       router.push("forgotPasswordCode");
     } catch (err: any) {
-      console.log(err?.response?.data?.message);
+      console.error(err?.response?.data?.message);
       Toast.show(err?.response?.data?.message || "Erro interno do servidor", {
         type: "danger",
       });
     }
   };
 
-  const form = useFormik({
-    initialValues: {
-      email: "",
-    },
-    onSubmit: onSubmitForm,
-    validationSchema: ForgotPasswordSchema,
-  });
-
   return (
     <Wrapper>
       <HeaderInfos title="Esqueceu a senha?" subtitle="Digite seu e-mail para que possamos recuperá-la para você" />
       <Body>
-        <FormItem label="E-mail" error={form.errors.email}>
-          <InputText
-            placeholder="Digite seu e-mail"
-            keyboardType="email-address"
-            source={require("@assets/icons/email.svg")}
-            value={form.values.email}
-            onChangeText={form.handleChange("email")}
-            isError={!!form.errors.email}
-            autoFocus
-            autoCapitalize="none"
-            autoCorrect={false}
-            editable={!form.isSubmitting}
+        <FormItem label="E-mail" error={errors.email}>
+          <Controller
+            name="email"
+            control={control}
+            render={({ field: { onChange, onBlur, value }}) => (
+              <InputText
+                placeholder="Digite seu e-mail"
+                keyboardType="email-address"
+                source={require("@assets/icons/email.svg")}
+                value={value}
+                onBlur={onBlur}
+                onChangeText={onChange}
+                isError={!!errors.email}
+                autoFocus
+                autoCapitalize="none"
+                autoCorrect={false}
+                editable={!isSubmitting}
+              />
+            )}
           />
         </FormItem>
       </Body>
       <Footer>
         <ButtonPrimary
-          onPress={form.handleSubmit as unknown as (e: GestureResponderEvent) => void}
-          disabled={!form.isValid || form.isSubmitting}
-          loading={form.isSubmitting}
+          onPress={handleSubmit(onSubmit)}
+          disabled={!isValid || isSubmitting}
+          loading={isSubmitting}
         >
           Enviar
         </ButtonPrimary>

@@ -1,5 +1,3 @@
-import { GestureResponderEvent } from "react-native";
-import { useFormik } from "formik";
 import * as Yup from "yup";
 import { router } from "expo-router";
 import { Toast } from "react-native-toast-notifications";
@@ -12,19 +10,35 @@ import { api } from "@config/api";
 import { useAuth } from "@context/AuthProvider";
 
 import { Body, Footer, Wrapper } from "./styles";
+import { yupResolver } from "@hookform/resolvers/yup";
+import { Controller, useForm } from "react-hook-form";
+import { useEffect } from "react";
 
 export default function ForgotPasswordCodePage() {
-  const { setResetPassword } = useAuth();
+  const { setResetPassword, resetPassword } = useAuth();
 
-  const ForgotPasswordSchema = Yup.object().shape({
+  const validationSchema = Yup.object().shape({
     code: Yup.string().required("Código é obrigatório"),
   });
 
-  const onSubmitForm = async (values: any) => {
+  const {
+    control,
+    register,
+    handleSubmit,
+    formState: { errors, isSubmitting, isValid }
+  } = useForm({
+    resolver: yupResolver(validationSchema),
+  });
+
+  useEffect(() => {
+    register('code');
+  }, [register]);
+
+  const onSubmit = async (values: any) => {
     try {
-      const result = await api.post("/auth/reset-password/code", {
-        code: values.code,
-      });
+      await api.get(
+        `/auth/reset-password/enabled?token=${resetPassword.token}&code=${values.code}`
+      );
 
       Toast.show("Código validado com sucesso", {
         type: "success",
@@ -37,34 +51,35 @@ export default function ForgotPasswordCodePage() {
 
       router.push("forgotPasswordNew");
     } catch (err: any) {
-      console.log(err?.response?.data?.message);
+      console.error(err?.response?.data?.message);
       Toast.show(err?.response?.data?.message || "Erro interno do servidor", {
         type: "danger",
       });
     }
   };
 
-  const form = useFormik({
-    initialValues: {
-      code: "",
-    },
-    onSubmit: onSubmitForm,
-    validationSchema: ForgotPasswordSchema,
-  });
-
   return (
     <Wrapper>
       <HeaderInfos title="Código de 6 dígitos" subtitle="O código foi enviado para e-mail mencionado na etapa anterior" />
       <Body>
-        <FormItem error={form.errors.code}>
-          <ConfirmationCode value={form.values.code} setValue={(e) => form.setFieldValue("code", e)} />
+        <FormItem error={errors.code}>
+          <Controller
+            name="code"
+            control={control}
+            render={({ field: { value, onChange }}) => (
+              <ConfirmationCode
+                value={value}
+                setValue={(e) => onChange(e)}
+              />
+            )}
+          />
         </FormItem>
       </Body>
       <Footer>
         <ButtonPrimary
-          onPress={form.handleSubmit as unknown as (e: GestureResponderEvent) => void}
-          disabled={!form.isValid || form.isSubmitting}
-          loading={form.isSubmitting}
+          onPress={handleSubmit(onSubmit)}
+          disabled={!isValid || isSubmitting}
+          loading={isSubmitting}
         >
           Concluir
         </ButtonPrimary>

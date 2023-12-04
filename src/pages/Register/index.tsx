@@ -1,5 +1,6 @@
-import { GestureResponderEvent } from "react-native";
-import { useFormik } from "formik";
+import { useEffect } from "react";
+import { Controller, useForm } from "react-hook-form";
+import { yupResolver } from "@hookform/resolvers/yup";
 import * as Yup from "yup";
 import { Toast } from "react-native-toast-notifications";
 import AsyncStorage from "@react-native-async-storage/async-storage";
@@ -15,7 +16,7 @@ import { api } from "@config/api";
 import { Body, Footer, Wrapper } from "./styles";
 
 export default function RegisterPage() {
-  const signupSchema = Yup.object().shape({
+  const validationSchema = Yup.object().shape({
     name: Yup.string().required("Nome é obrigatório"),
     email: Yup.string().email("E-mail inválido").required("E-mail é obrigatório"),
     password: Yup.string().required("Senha é obrigatório"),
@@ -25,7 +26,25 @@ export default function RegisterPage() {
     terms: Yup.bool().oneOf([true], "É necessário aceitar os Termos"),
   });
 
-  const onSubmitForm = async (values: any) => {
+  const {
+    control,
+    register,
+    handleSubmit,
+    setValue,
+    formState: { errors, isSubmitting, isValid }
+  } = useForm({
+    resolver: yupResolver(validationSchema),
+  });
+
+  useEffect(() => {
+    register('name');
+    register('email');
+    register('password');
+    register('passwordConfirmation');
+    register('terms');
+  }, [register]);
+
+  const onSubmit = async (values: any) => {
     try {
       const firstName = values.name.split(' ').slice(0, -1).join(' ');
       const lastName = values.name.split(' ').slice(-1).join(' ');
@@ -44,94 +63,114 @@ export default function RegisterPage() {
       await AsyncStorage.setItem('accessToken', result?.accessToken);
       // await AsyncStorage.setItem('refreshToken', result?.refreshToken);
       router.push("dashboard");
-
-      console.log(result);
     } catch (err: any) {
-      console.log(err?.response?.data?.message);
+      console.error(err?.response?.data?.message);
       Toast.show(err?.response?.data?.message || "Erro interno do servidor", {
         type: "danger",
       });
     }
   };
 
-  const form = useFormik({
-    initialValues: {
-      name: "",
-      email: "",
-      password: "",
-      passwordConfirmation: "",
-      terms: false,
-    },
-    onSubmit: onSubmitForm,
-    validationSchema: signupSchema,
-  });
-
   return (
     <Wrapper>
       <HeaderInfos title="Crie sua conta" subtitle="Seja bem vindo ao Sold metrics!" />
       <Body>
-        <FormItem label="Nome" error={form.errors.name}>
-          <InputText
-            placeholder="Digite seu nome"
-            source={require("@assets/icons/singleUser.svg")}
-            autoFocus
-            value={form.values.name}
-            onChangeText={form.handleChange("name")}
-            isError={!!form.errors.name}
-            editable={!form.isSubmitting}
+        <FormItem label="Nome" error={errors.name}>
+          <Controller
+            name="name"
+            control={control}
+            render={({ field: { onChange, onBlur, value }}) => (
+              <InputText
+                placeholder="Digite seu nome"
+                source={require("@assets/icons/singleUser.svg")}
+                autoFocus
+                value={value}
+                onBlur={onBlur}
+                onChangeText={onChange}
+                isError={!!errors.name}
+                editable={!isSubmitting}
+              />
+            )}
           />
         </FormItem>
-        <FormItem label="E-mail" error={form.errors.email}>
-          <InputText
-            placeholder="Digite seu e-mail"
-            keyboardType="email-address"
-            source={require("@assets/icons/email.svg")}
-            value={form.values.email}
-            onChangeText={form.handleChange("email")}
-            isError={!!form.errors.email}
-            autoCapitalize="none"
-            autoCorrect={false}
-            editable={!form.isSubmitting}
+        <FormItem label="E-mail" error={errors.email}>
+          <Controller
+            name="email"
+            control={control}
+            render={({ field: { onChange, onBlur, value }}) => (
+              <InputText
+                placeholder="Digite seu e-mail"
+                keyboardType="email-address"
+                source={require("@assets/icons/email.svg")}
+                value={value}
+                onBlur={onBlur}
+                onChangeText={onChange}
+                isError={!!errors.email}
+                autoCapitalize="none"
+                autoCorrect={false}
+                editable={!isSubmitting}
+              />
+            )}
           />
         </FormItem>
-        <FormItem label="Senha" error={form.errors.password}>
-          <InputText
-            placeholder="Digite sua senha"
-            source={require("@assets/icons/lock.svg")}
-            value={form.values.password}
-            onChangeText={form.handleChange("password")}
-            isError={!!form.errors.password}
-            autoCapitalize="none"
-            autoCorrect={false}
-            secureTextEntry
-            editable={!form.isSubmitting}
+        <FormItem label="Senha" error={errors.password}>
+          <Controller
+            name="email"
+            control={control}
+            render={({ field: { onChange, onBlur, value }}) => (
+              <InputText
+                placeholder="Digite sua senha"
+                source={require("@assets/icons/lock.svg")}
+                value={value}
+                onBlur={onBlur}
+                onChangeText={onChange}
+                isError={!!errors.password}
+                autoCapitalize="none"
+                autoCorrect={false}
+                secureTextEntry
+                editable={!isSubmitting}
+              />
+            )}
           />
         </FormItem>
-        <FormItem label="Repita a senha" error={form.errors.passwordConfirmation}>
-          <InputText
-            placeholder="Digite sua senha"
-            source={require("@assets/icons/lock.svg")}
-            value={form.values.passwordConfirmation}
-            onChangeText={form.handleChange("passwordConfirmation")}
-            isError={!!form.errors.passwordConfirmation}
-            autoCapitalize="none"
-            autoCorrect={false}
-            secureTextEntry
-            editable={!form.isSubmitting}
+        <FormItem label="Repita a senha" error={errors.passwordConfirmation}>
+          <Controller
+            name="email"
+            control={control}
+            render={({ field: { onChange, onBlur, value }}) => (
+              <InputText
+                placeholder="Digite sua senha"
+                source={require("@assets/icons/lock.svg")}
+                value={value}
+                onBlur={onBlur}
+                onChangeText={onChange}
+                isError={!!errors.passwordConfirmation}
+                autoCapitalize="none"
+                autoCorrect={false}
+                secureTextEntry
+                editable={!isSubmitting}
+              />
+            )}
           />
         </FormItem>
-
-        <FormItem error={form.errors.terms}>
-          <InputCheckbox onValueChange={(value) => form.setFieldValue("terms", value)} value={form.values.terms}>
-            Testando
-          </InputCheckbox>
+        <FormItem error={errors.terms}>
+          <Controller
+            name="email"
+            control={control}
+            render={({ field: { value }}) => (
+              // @ts-ignore
+              <InputCheckbox onValueChange={(value) => setValue("terms", value)} value={value}>
+                Testando
+              </InputCheckbox>
+            )}
+          />
         </FormItem>
       </Body>
       <Footer>
         <ButtonPrimary
-          onPress={form.handleSubmit as unknown as (e: GestureResponderEvent) => void}
-          disabled={!form.isValid || form.isSubmitting}
-          loading={form.isSubmitting}
+          onPress={handleSubmit(onSubmit)}
+          disabled={!isValid || isSubmitting}
+          loading={isSubmitting}
         >
           Cadastrar-se
         </ButtonPrimary>

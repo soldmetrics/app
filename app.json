@@ -24,15 +24,39 @@
         "backgroundColor": "#0E29D0"
       }
     },
+    "notification": {
+      "icon": "./assets/icon.png",
+      "color": "#0E29D0",
+      "iosDisplayInForeground": true,
+      "androidMode": "default",
+      "androidCollapsedTitle": "Atualização do SoldMetrics"
+    },
     "web": {
       "favicon": "./assets/favicon.png",
       "bundler": "metro"
     },
     "plugins": [
-      "expo-router"
+      "expo-router",
+      [
+        "expo-notifications",
+        {
+          "icon": "./assets/icon.png",
+          "color": "#0E29D0",
+          "sounds": []
+        }
+      ]
     ],
     "experiments": {
       "tsconfigPaths": true
-    }
+    },
+    "extra": {
+      "router": {
+        "origin": false
+      },
+      "eas": {
+        "projectId": "bf03d124-de2c-47b6-9b8f-471c2f0b719d"
+      }
+    },
+    "owner": "rodrigocgodoy"
   }
 }

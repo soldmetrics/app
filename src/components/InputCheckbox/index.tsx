@@ -3,8 +3,8 @@ import { CheckboxProps } from "expo-checkbox";
 import { Wrapper, Input, Label } from "./styles";
 
 type InputCheckboxProps = {
-  children: React.ReactNode,
-  isError?: boolean,
+  children: React.ReactNode;
+  isError?: boolean;
 } & CheckboxProps;
 
 export default function InputCheckbox({ children, isError = false, ...props }: InputCheckboxProps) {

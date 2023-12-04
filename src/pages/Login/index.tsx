@@ -1,9 +1,10 @@
-import { GestureResponderEvent } from "react-native";
-import { useFormik } from "formik";
+import { useEffect } from "react";
 import * as Yup from "yup";
 import { Link, router } from "expo-router";
 import { Toast } from "react-native-toast-notifications";
 import AsyncStorage from "@react-native-async-storage/async-storage";
+import { yupResolver } from "@hookform/resolvers/yup";
+import { Controller, useForm } from "react-hook-form";
 
 import HeaderInfos from "@components/HeaderInfos";
 import ButtonPrimary from "@components/ButtonPrimary";
@@ -17,12 +18,26 @@ import { Body, Footer, TextLink, Wrapper } from "./styles";
 export default function LoginPage() {
   const { setUser } = useAuth();
 
-  const loginSchema = Yup.object().shape({
+  const validationSchema = Yup.object().shape({
     email: Yup.string().email("E-mail inválido").required("E-mail é obrigatório"),
     password: Yup.string().required("Senha é obrigatório"),
   });
 
-  const onSubmitForm = async (values: any) => {
+  const {
+    control,
+    register,
+    handleSubmit,
+    formState: { errors, isSubmitting, isValid }
+  } = useForm({
+    resolver: yupResolver(validationSchema),
+  });
+
+  useEffect(() => {
+    register('email');
+    register('password');
+  }, [register]);
+
+  const onSubmit = async (values: any) => {
     try {
       const { data: result } = await api.post("/auth/login", {
         email: values.email,
@@ -31,68 +46,70 @@ export default function LoginPage() {
 
       await AsyncStorage.setItem('accessToken', result?.accessToken);
       // await AsyncStorage.setItem('refreshToken', result?.refreshToken);
-      router.push("dashboard");
-
-      console.log(result);
-
       setUser(result.user);
+      router.push("dashboard");
     } catch (err: any) {
-      console.log(err);
+      console.error(err);
       Toast.show(err?.response?.data?.message || "Erro interno do servidor", {
         type: "danger",
       });
     }
   };
 
-  const form = useFormik({
-    initialValues: {
-      email: "",
-      password: "",
-    },
-    onSubmit: onSubmitForm,
-    validationSchema: loginSchema,
-  });
-
   return (
     <Wrapper>
       <HeaderInfos title="Bem vindo de volta!" subtitle="Digite seu e-mail e senha para fazer login" />
       <Body>
-        <FormItem label="E-mail" error={form.errors.email}>
-          <InputText
-            placeholder="Digite seu e-mail"
-            keyboardType="email-address"
-            source={require("@assets/icons/email.svg")}
-            value={form.values.email}
-            onChangeText={form.handleChange("email")}
-            isError={!!form.errors.email}
-            autoFocus
-            autoCapitalize="none"
-            autoCorrect={false}
-            editable={!form.isSubmitting}
+        <FormItem label="E-mail" error={errors.email}>
+          <Controller
+            name="email"
+            control={control}
+            render={({ field: { onChange, onBlur, value }}) => (
+              <InputText
+                placeholder="Digite seu e-mail"
+                keyboardType="email-address"
+                source={require("@assets/icons/email.svg")}
+                value={value}
+                onBlur={onBlur}
+                onChangeText={onChange}
+                isError={!!errors.email}
+                autoFocus
+                autoCapitalize="none"
+                autoCorrect={false}
+                editable={!isSubmitting}
+              />
+            )}
           />
         </FormItem>
-        <FormItem label="Senha" error={form.errors.password}>
-          <InputText
-            placeholder="Digite sua senha"
-            source={require("@assets/icons/lock.svg")}
-            value={form.values.password}
-            onChangeText={form.handleChange("password")}
-            isError={!!form.errors.password}
-            autoCapitalize="none"
-            autoCorrect={false}
-            secureTextEntry
-            editable={!form.isSubmitting}
+        <FormItem label="Senha" error={errors.password}>
+          <Controller
+            name="password"
+            control={control}
+            render={({ field: { onChange, onBlur, value }}) => (
+              <InputText
+                placeholder="Digite sua senha"
+                source={require("@assets/icons/lock.svg")}
+                value={value}
+                onChangeText={onChange}
+                onBlur={onBlur}
+                isError={!!errors.password}
+                autoCapitalize="none"
+                autoCorrect={false}
+                secureTextEntry
+                editable={!isSubmitting}
+              />
+            )}
           />
         </FormItem>
-        <Link href="forgotPassword" asChild>
+        <Link href="/forgotPassword" asChild>
           <TextLink>Esqueci a senha</TextLink>
         </Link>
       </Body>
       <Footer>
         <ButtonPrimary
-          onPress={form.handleSubmit as unknown as (e: GestureResponderEvent) => void}
-          disabled={!form.isValid || form.isSubmitting}
-          loading={form.isSubmitting}
+          onPress={handleSubmit(onSubmit)}
+          disabled={!isValid || isSubmitting}
+          loading={isSubmitting}
         >
           Entrar
         </ButtonPrimary>

@@ -5,7 +5,7 @@ import styled from "styled-components/native";
 export const Wrapper = styled(BottomSheet)`
   display: flex;
   flex: 1;
-  box-shadow: 10px 10px 50px rgba(0,0,0,0.75);
+  box-shadow: 10px 10px 50px rgba(0,0,0, 0.75);
 `;
 
 export const Content = styled.View`

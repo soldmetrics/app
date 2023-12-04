@@ -4,7 +4,7 @@ import { NativeSyntheticEvent, TextInput, TextInputFocusEventData, TextInputProp
 import { Wrapper, IconLeft, Input } from "./styles";
 
 type InputTextProps = {
-  source: string,
+  source?: string,
   isError?: boolean,
 } & TextInputProps;
 
@@ -27,7 +27,7 @@ export default function InputText({ source, isError = false, ...props }: InputTe
   return (
     // @ts-ignore
     <Wrapper onTouchStart={onFocusInput} isError={isError} isFocus={isFocus}>
-      <IconLeft source={source} />
+      {source && <IconLeft source={source} />}
       <Input {...props} ref={inputRef} onFocus={onFocusWrapper} onBlur={onBlurWrapper} />
     </Wrapper>
   );

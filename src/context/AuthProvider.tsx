@@ -1,16 +1,16 @@
 import React, { createContext, useContext, useEffect, useState } from 'react';
 import { useSegments, useRouter } from 'expo-router';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import * as SplashScreen from 'expo-splash-screen';
 
 import { api } from '@config/api';
+import { useAppDispatch } from '@store/hooks';
+import { setAppIsReady } from '@slices/globalSlice';
 
 type AuthType = {
   user: any;
   setUser: (user: any) => void;
   resetPassword: any;
   setResetPassword: (info: any) => void;
-  isReady: boolean;
 }
 
 const AuthContext = createContext<AuthType>({
@@ -18,33 +18,38 @@ const AuthContext = createContext<AuthType>({
   setUser: () => {},
   resetPassword: null,
   setResetPassword: () => {},
-  isReady: false,
 });
 
 export const useAuth = () => useContext(AuthContext);
 
-function useProtectedRoute(user: any) {
+function useProtectedRoute(user: any, isReady: boolean) {
   const segments = useSegments();
   const router = useRouter();
 
   useEffect(() => {
-    const inAuthGroup = segments[0] === '(auth)';
+    const inAuthGroup = segments[0] === '(auth)' || segments[0] === 'onboarding';
 
     if (
       !user &&
-      !inAuthGroup
+      !inAuthGroup &&
+      isReady
     ) {
       router.replace('onboarding');
     } else if (user && inAuthGroup) {
-      router.replace('dashboard');
+      if (user?.company?.integrationKey) {
+        router.replace('dashboard');
+      } else {
+        router.replace('registerIntegration');
+      }
     }
   }, [user, segments]);
 }
 
-export function AuthProvider({ children }: { children: JSX.Element }): JSX.Element {
+export function AuthProvider({ children }: { children: React.ReactNode | React.ReactNode[] }): JSX.Element {
   const [user, setUser] = useState<any | null>(null);
   const [resetPassword, setResetPassword] = useState<any | null>(null);
   const [isReady, setIsReady] = useState(false);
+  const dispath = useAppDispatch();
 
   useEffect(() => {
     const abortController = new AbortController();
@@ -59,15 +64,18 @@ export function AuthProvider({ children }: { children: JSX.Element }): JSX.Eleme
           api.defaults.headers.common['Authorization'] = `Bearer ${accessToken}`;
 
           // TODO: Validar access token
-          // const { data: result } = await api.get('/users/me', {
-          //   signal: abortController.signal,
-          // });
+          const result = await api.get('/auth/me', {
+            signal: abortController.signal,
+          });
 
-          // setUser(result.user);
+          console.log(result?.data);
+
+          if (result?.data) {
+            setUser(result?.data);
+          }
         }
 
         setIsReady(true);
-        await SplashScreen.hideAsync();
       } catch (error: unknown) {
         if (abortController.signal.aborted) {
           console.error('Data fetching cancelled');
@@ -78,18 +86,25 @@ export function AuthProvider({ children }: { children: JSX.Element }): JSX.Eleme
     };
 
     fetchUser();
-
-    return;
   }, []);
 
-  useProtectedRoute(user);
+  useEffect(() => {
+    const loadAsync = () => {
+      dispath(setAppIsReady(isReady));
+      // dispath(setFontsIsLoaded(fontsLoaded));
+      // dispath(setFontsIsError(!!fontError));
+    };
+
+    loadAsync();
+  }, [isReady]);
+
+  useProtectedRoute(user, isReady);
 
   const authContext: AuthType = {
     user,
     setUser,
     resetPassword,
     setResetPassword,
-    isReady,
   };
 
   return (
@@ -97,4 +112,4 @@ export function AuthProvider({ children }: { children: JSX.Element }): JSX.Eleme
       {children}
     </AuthContext.Provider>
   );
-}
+};

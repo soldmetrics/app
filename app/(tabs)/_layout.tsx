@@ -1,23 +1,40 @@
 import { Tabs } from "expo-router";
 
+import CustomTabBar from "@components/CustomTabBar";
+import SelectHeaderMarketplace from "@components/SelectHeaderMarketplace";
+import HeaderIconLeft from "@components/HeaderIconLeft";
+import HeaderIconRight from "@components/HeaderIconRight";
+
 export default function TabsLayout() {
   return (
     <Tabs
-      // initialRouteName="home"
-      // screenOptions={}
-      // tabBar={(props) =>
-      //   Platform.OS === "ios" ? (
-      //     <BlurView
-      //       style={{ position: "absolute", bottom: 0, left: 0, right: 0 }}
-      //       tint={colorScheme == "dark" ? "dark" : "light"}
-      //       intensity={95}
-      //     >
-      //       <BottomTabBar {...props} />
-      //     </BlurView>
-      //   ) : (
-      //     <BottomTabBar {...props} />
-      //   )
-      // }
-    />
+      screenOptions={{
+        headerLeft: HeaderIconLeft,
+        headerRight: HeaderIconRight,
+        headerTitle: SelectHeaderMarketplace,
+        headerShadowVisible: false,
+      }}
+      tabBar={(props) => <CustomTabBar {...props} />}
+    >
+      <Tabs.Screen
+        name="dashboard"
+        options={{
+          title: "Home"
+        }}
+      />
+      <Tabs.Screen
+        name="sales"
+        options={{
+          title: "Vendas"
+        }}
+      />
+      <Tabs.Screen
+        name="profile"
+        options={{
+          title: "Perfil",
+          headerTitle: () => null,
+        }}
+      />
+    </Tabs>
   );
 };
