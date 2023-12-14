@@ -44,7 +44,8 @@
           "color": "#0E29D0",
           "sounds": []
         }
-      ]
+      ],
+      "expo-localization"
     ],
     "experiments": {
       "tsconfigPaths": true

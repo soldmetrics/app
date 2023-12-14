@@ -115,7 +115,7 @@ export default function RegisterPage() {
         </FormItem>
         <FormItem label="Senha" error={errors.password}>
           <Controller
-            name="email"
+            name="password"
             control={control}
             render={({ field: { onChange, onBlur, value }}) => (
               <InputText
@@ -135,7 +135,7 @@ export default function RegisterPage() {
         </FormItem>
         <FormItem label="Repita a senha" error={errors.passwordConfirmation}>
           <Controller
-            name="email"
+            name="passwordConfirmation"
             control={control}
             render={({ field: { onChange, onBlur, value }}) => (
               <InputText
@@ -155,7 +155,7 @@ export default function RegisterPage() {
         </FormItem>
         <FormItem error={errors.terms}>
           <Controller
-            name="email"
+            name="terms"
             control={control}
             render={({ field: { value }}) => (
               // @ts-ignore

@@ -1,8 +1,8 @@
 import { LogBox } from 'react-native';
 import * as SplashScreen from 'expo-splash-screen';
+import { Slot } from 'expo-router';
 
 import RootProviders from '@context/RootProviders';
-import { Slot } from 'expo-router';
 import {
   useFonts,
   Inter_300Light,

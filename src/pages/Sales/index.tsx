@@ -1,7 +1,10 @@
 import HeaderPage from "@components/HeaderPage";
-import Sale from "@components/Sale";
+import ListSale from "@components/ListSale";
+import i18n from "@config/i18n";
 
-import { List, SeparatorHorizontal, Wrapper } from "./styles";
+import { Wrapper } from "./styles";
+
+const img = "https://cdn.sistemawbuy.com.br/arquivos/d92a9c4432d1813f5c488c439eb70a05/produtos/VUA1DOU6/d4299d127c0722ce3648bb8945b8d448-6121160bbcfd1.jpg";
 
 const data = [
   {
@@ -10,6 +13,7 @@ const data = [
     typeIntegration: "MercadoLivre",
     itens: [
       {
+        img,
         code: "AZUL001",
         description: "Mini Porta Joias Organizador Maquiagem  Viagem Portátil Cor:Azul-tiffany",
         qty: 2,
@@ -24,6 +28,7 @@ const data = [
     typeIntegration: "MercadoLivre",
     itens: [
       {
+        img,
         code: "AZUL001",
         description: "Mini Porta Joias Organizador Maquiagem  Viagem Portátil Cor:Azul-tiffany",
         qty: 2,
@@ -31,6 +36,7 @@ const data = [
         un: "UN"
       },
       {
+        img,
         code: "BARBIE001",
         description: "Mini Porta Joias Organizador Maquiagem  Viagem Portátil Cor:Rosa Barbie",
         qty: 5,
@@ -44,14 +50,8 @@ const data = [
 export default function SalesPage() {
   return (
     <Wrapper>
-      <HeaderPage title="Minhas vendas" />
-      <List
-        keyExtractor={(item) => item.numberOrderStore}
-        data={data}
-        // @ts-ignore
-        renderItem={(item) => <Sale data={item} />}
-        // ItemSeparatorComponent={() => <SeparatorHorizontal />}
-      />
+      <HeaderPage title={i18n.t("dashboard.mySales")} />
+      <ListSale data={data} />
     </Wrapper>
   );
 };

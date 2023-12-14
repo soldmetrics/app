@@ -17,41 +17,47 @@ Notifications.setNotificationHandler({
 });
 
 async function registerForPushNotificationsAsync(): Promise<string> {
-  let token = '';
+  try {
+    let token = '';
 
-  if (Platform.OS === 'android') {
-    Notifications.setNotificationChannelAsync('default', {
-      name: 'default',
-      importance: Notifications.AndroidImportance.MAX,
-      vibrationPattern: [0, 250, 250, 250],
-      lightColor: '#FF231F7C',
-    });
-  }
-
-  if (Device.isDevice) {
-    const { status: existingStatus } = await Notifications.getPermissionsAsync();
-    let finalStatus = existingStatus;
-
-    if (existingStatus !== 'granted') {
-      const { status } = await Notifications.requestPermissionsAsync();
-      finalStatus = status;
+    if (Platform.OS === 'android') {
+      Notifications.setNotificationChannelAsync('default', {
+        name: 'default',
+        importance: Notifications.AndroidImportance.MAX,
+        vibrationPattern: [0, 250, 250, 250],
+        lightColor: '#FF231F7C',
+      });
     }
 
-    if (finalStatus !== 'granted') {
-      alert('Failed to get push token for push notification!');
-      return token;
+    if (Device?.isDevice) {
+      const { status: existingStatus } = await Notifications.getPermissionsAsync();
+      let finalStatus = existingStatus;
+
+      if (existingStatus !== 'granted') {
+        const { status } = await Notifications.requestPermissionsAsync();
+        finalStatus = status;
+      }
+
+      if (finalStatus !== 'granted') {
+        alert('Failed to get push token for push notification!');
+        return token;
+      }
+
+      const tokenResult = await Notifications.getExpoPushTokenAsync({
+        projectId: Constants?.expoConfig?.extra?.eas.projectId,
+      });
+
+      token = tokenResult?.data;
+    } else {
+      alert('Must use physical device for Push Notifications');
     }
 
-    const tokenResult = await Notifications.getExpoPushTokenAsync({
-      projectId: Constants?.expoConfig?.extra?.eas.projectId,
-    });
+    return token;
+  } catch (error) {
+    console.log("🚀 ~ file: NotificationProvider.tsx:57 ~ registerForPushNotificationsAsync ~ error:", error)
 
-    token = tokenResult.data;
-  } else {
-    alert('Must use physical device for Push Notifications');
+    return '';
   }
-
-  return token;
 };
 
 export default function NotificationProvider() {
@@ -64,13 +70,14 @@ export default function NotificationProvider() {
   function registerExpoToken(pushToken: string) {
     try {
       api.post("/auth/register-device", {
-        name: Device.deviceName,
-        model: Device.modelName,
-        type: Device.deviceType,
+        name: Device?.deviceName,
+        model: Device?.modelName,
+        type: Device?.deviceType,
         pushToken,
-        platform: Platform.OS,
+        platform: Platform?.OS,
       });
     } catch (err: any) {
+      console.log("🚀 ~ file: NotificationProvider.tsx:74 ~ registerExpoToken ~ err:", err)
       console.error(err);
       Toast.show(err?.response?.data?.message || "Erro interno do servidor", {
         type: "danger",
@@ -79,28 +86,30 @@ export default function NotificationProvider() {
   };
 
   useEffect(() => {
-    if (user) {
+    console.log("🚀 ~ file: NotificationProvider.tsx:90 ~ useEffect ~ user:", user)
+    if (user?.id) {
       registerForPushNotificationsAsync().then((token: string) => {
+        console.log("🚀 ~ file: NotificationProvider.tsx:84 ~ registerForPushNotificationsAsync ~ token:", token)
         setExpoPushToken(token);
 
         registerExpoToken(token);
       });
 
-      notificationListener.current = Notifications.addNotificationReceivedListener(notification => {
-        setNotification(notification);
-      });
+      // notificationListener.current = Notifications.addNotificationReceivedListener(notification => {
+      //   setNotification(notification);
+      // });
 
-      responseListener.current = Notifications.addNotificationResponseReceivedListener(response => {
-        console.log(response);
-      });
+      // responseListener.current = Notifications.addNotificationResponseReceivedListener(response => {
+      //   console.log(response);
+      // });
     }
 
-    return () => {
-      // @ts-ignore
-      Notifications.removeNotificationSubscription(notificationListener.current);
-      // @ts-ignore
-      Notifications.removeNotificationSubscription(responseListener.current);
-    };
+    // return () => {
+    //   // @ts-ignore
+    //   Notifications.removeNotificationSubscription(notificationListener.current);
+    //   // @ts-ignore
+    //   Notifications.removeNotificationSubscription(responseListener.current);
+    // };
   }, [user]);
 
   return null;

@@ -1,3 +1,4 @@
+import { Image } from "expo-image";
 import styled from "styled-components/native";
 
 export const Wrapper = styled.View`
@@ -11,6 +12,7 @@ export const Wrapper = styled.View`
 export const Header = styled.View`
   flex: 1;
   flex-direction: row;
+  align-items: center;
   gap: 9px;
   padding: 8px 0;
 `;
@@ -70,7 +72,7 @@ export const ItemQty = styled.Text`
   line-height: normal;
   font-family: ${({ theme }) => theme.fonts.regular};
   color: ${({ theme }) => theme.colors.textAuxiliary0};
-  width: 10%;
+  /* width: 10%; */
 `;
 
 export const ItemTotal = styled.Text`
@@ -79,4 +81,22 @@ export const ItemTotal = styled.Text`
   font-family: ${({ theme }) => theme.fonts.regular};
   color: ${({ theme }) => theme.colors.textAuxiliary0};
   width: 25%;
+`;
+
+const placeholder =
+  '|rF?hV%2WCj[ayj[a|j[az_NaeWBj@ayfRayfQfQM{M|azj[azf6fQfQfQIpWXofj[ayj[j[fQayWCoeoeaya}j[ayfQa{oLj?j[WVj[ayayj[fQoff7azayj[ayj[j[ayofayayayj[fQj[ayayj[ayfjj[j[ayjuayj[';
+
+export const ItemImg = styled(Image).attrs({
+  // placeholder,
+  contentFit: "contain"
+})`
+  width: 32px;
+  height: 32px;
+  min-width: 32px;
+  min-height: 32px;
+`;
+
+export const IconFull = styled(Image)`
+  width: 38px;
+  height: 12px;
 `;

@@ -1,9 +1,10 @@
 import { Tabs } from "expo-router";
 
 import CustomTabBar from "@components/CustomTabBar";
-import SelectHeaderMarketplace from "@components/SelectHeaderMarketplace";
 import HeaderIconLeft from "@components/HeaderIconLeft";
 import HeaderIconRight from "@components/HeaderIconRight";
+import i18n from "@config/i18n";
+// import SelectHeaderMarketplace from "@components/SelectHeaderMarketplace";
 
 export default function TabsLayout() {
   return (
@@ -11,7 +12,7 @@ export default function TabsLayout() {
       screenOptions={{
         headerLeft: HeaderIconLeft,
         headerRight: HeaderIconRight,
-        headerTitle: SelectHeaderMarketplace,
+        headerTitle: () => null,
         headerShadowVisible: false,
       }}
       tabBar={(props) => <CustomTabBar {...props} />}
@@ -19,20 +20,20 @@ export default function TabsLayout() {
       <Tabs.Screen
         name="dashboard"
         options={{
-          title: "Home"
+          title: i18n.t("menu.home"),
         }}
       />
       <Tabs.Screen
         name="sales"
         options={{
-          title: "Vendas"
+          title: i18n.t("menu.sales"),
         }}
       />
       <Tabs.Screen
         name="profile"
         options={{
-          title: "Perfil",
-          headerTitle: () => null,
+          title: i18n.t("menu.profile"),
+          headerShown: false,
         }}
       />
     </Tabs>
