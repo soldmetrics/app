@@ -58,6 +58,7 @@ export default function RegisterPage() {
 
       const { data: result } = await api.post("/auth/register", {
         user,
+        company: "Rodrigo Godoy",
       });
 
       await AsyncStorage.setItem('accessToken', result?.accessToken);

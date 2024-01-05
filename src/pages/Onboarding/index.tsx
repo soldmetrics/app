@@ -1,6 +1,6 @@
 import { useMemo, useState } from 'react';
 import { Dimensions } from 'react-native';
-import { Link } from 'expo-router';
+import { router } from 'expo-router';
 
 import CarouselItem from '@components/CarouselItem';
 import ButtonPrimary from '@components/ButtonPrimary';
@@ -29,6 +29,14 @@ export default function OnboardingPage() {
 
     return require('@assets/iconLight.svg');
   }, [currentTheme]);
+
+  const onLogin = () => {
+    router.push('login');
+  };
+
+  const onRegister = () => {
+    router.push('register');
+  };
 
   return (
     <Wrapper>
@@ -69,16 +77,12 @@ export default function OnboardingPage() {
         />
       </WrapperContent>
       <WrapperButtons>
-        <Link href="/register" asChild>
-          <ButtonPrimary>
-            Cadastrar-se
-          </ButtonPrimary>
-        </Link>
-        <Link href="/login" asChild>
-          <ButtonSecundary>
-            Entrar
-          </ButtonSecundary>
-        </Link>
+        <ButtonPrimary onPress={onRegister}>
+          Cadastrar-se
+        </ButtonPrimary>
+        <ButtonSecundary onPress={onLogin}>
+          Entrar
+        </ButtonSecundary>
       </WrapperButtons>
     </Wrapper>
   );

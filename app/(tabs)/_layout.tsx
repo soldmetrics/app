@@ -14,6 +14,7 @@ export default function TabsLayout() {
         headerRight: HeaderIconRight,
         headerTitle: () => null,
         headerShadowVisible: false,
+        headerStatusBarHeight: 1,
       }}
       tabBar={(props) => <CustomTabBar {...props} />}
     >

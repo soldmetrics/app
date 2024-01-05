@@ -54,8 +54,6 @@ async function registerForPushNotificationsAsync(): Promise<string> {
 
     return token;
   } catch (error) {
-    console.log("🚀 ~ file: NotificationProvider.tsx:57 ~ registerForPushNotificationsAsync ~ error:", error)
-
     return '';
   }
 };
@@ -68,30 +66,28 @@ export default function NotificationProvider() {
   const { user } = useAuth();
 
   function registerExpoToken(pushToken: string) {
-    try {
-      api.post("/auth/register-device", {
-        name: Device?.deviceName,
-        model: Device?.modelName,
-        type: Device?.deviceType,
-        pushToken,
-        platform: Platform?.OS,
-      });
-    } catch (err: any) {
-      console.log("🚀 ~ file: NotificationProvider.tsx:74 ~ registerExpoToken ~ err:", err)
-      console.error(err);
-      Toast.show(err?.response?.data?.message || "Erro interno do servidor", {
-        type: "danger",
-      });
+    if (pushToken) {
+      try {
+        api.post("/auth/register-device", {
+          name: Device?.deviceName,
+          model: Device?.modelName,
+          type: Device?.deviceType,
+          pushToken,
+          platform: Platform?.OS,
+        });
+      } catch (err: any) {
+        console.error(err);
+        Toast.show(err?.response?.data?.message || "Erro interno do servidor", {
+          type: "danger",
+        });
+      }
     }
   };
 
   useEffect(() => {
-    console.log("🚀 ~ file: NotificationProvider.tsx:90 ~ useEffect ~ user:", user)
     if (user?.id) {
       registerForPushNotificationsAsync().then((token: string) => {
-        console.log("🚀 ~ file: NotificationProvider.tsx:84 ~ registerForPushNotificationsAsync ~ token:", token)
         setExpoPushToken(token);
-
         registerExpoToken(token);
       });
 

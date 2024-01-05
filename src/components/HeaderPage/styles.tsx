@@ -11,7 +11,7 @@ export const Wrapper = styled.View`
 export const Title = styled.Text`
   font-family: ${({ theme }) => theme.fonts.bold};
   font-size: 18px;
-  line-height: normal;
+  line-height: 18px;
   color: ${({ theme }) => theme.colors.textPrimary};
 `;
 

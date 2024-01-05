@@ -22,7 +22,7 @@ export const Radio = styled.TouchableOpacity<IRadio>`
 export const RadioText = styled.Text`
   text-align: center;
   font-size: 16px;
-  line-height: normal;
+  line-height: 16px;
   font-family: ${({ theme }) => theme.fonts.regular};
   color: ${({ theme }) => theme.colors.textPrimary};
 `;

@@ -1,8 +1,6 @@
 import { LogBox } from 'react-native';
 import * as SplashScreen from 'expo-splash-screen';
 import { Slot } from 'expo-router';
-
-import RootProviders from '@context/RootProviders';
 import {
   useFonts,
   Inter_300Light,
@@ -11,13 +9,16 @@ import {
   Inter_600SemiBold,
   Inter_700Bold,
 } from '@expo-google-fonts/inter';
-import SplashScreenCustom from '@components/SplashScreenCustom';
+import { useCallback } from 'react';
+import styled from 'styled-components/native';
+
+import RootProviders from '@context/RootProviders';
 
 SplashScreen.preventAutoHideAsync();
 LogBox.ignoreAllLogs();
 
 export default function RootLayout() {
-  let [fontsLoaded, fontError] = useFonts({
+  let [fontsLoaded] = useFonts({
     'Inter Light': Inter_300Light,
     'Inter Regular': Inter_400Regular,
     'Inter Medium': Inter_500Medium,
@@ -25,13 +26,25 @@ export default function RootLayout() {
     'Inter Bold': Inter_700Bold,
   });
 
-  if (!fontsLoaded && !!fontError) {
-    return <SplashScreenCustom image={require('@assets/splash.png')} />;
+  const onLayoutRootView = useCallback(async () => {
+    if (fontsLoaded) {
+      await SplashScreen.hideAsync();
+    }
+  }, [fontsLoaded]);
+
+  if (!fontsLoaded) {
+    return null;
   }
 
   return (
-    <RootProviders>
-      <Slot />
-    </RootProviders>
+    <Container onLayout={onLayoutRootView}>
+      <RootProviders>
+        <Slot />
+      </RootProviders>
+    </Container>
   );
 };
+
+const Container = styled.SafeAreaView`
+  flex: 1;
+`;
