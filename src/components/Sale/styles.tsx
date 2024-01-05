@@ -21,21 +21,21 @@ export const IdSale = styled.Text`
   font-family: ${({ theme }) => theme.fonts.regular};
   color: ${({ theme }) => theme.colors.textAuxiliary0};
   font-size: 12px;
-  line-height: normal;
+  line-height: 12px;
 `;
 
 export const SeparatorVertical = styled.Text`
   font-family: ${({ theme }) => theme.fonts.regular};
   color: ${({ theme }) => theme.colors.textAuxiliary0};
   font-size: 12px;
-  line-height: normal;
+  line-height: 12px;
 `;
 
 export const DateTime = styled.Text`
   font-family: ${({ theme }) => theme.fonts.regular};
   color: ${({ theme }) => theme.colors.textAuxiliary0};
   font-size: 12px;
-  line-height: normal;
+  line-height: 12px;
 `;
 
 export const SeparatorHorizontal = styled.View`
@@ -61,7 +61,7 @@ export const Item = styled.View`
 
 export const ItemName = styled.Text`
   font-size: 12px;
-  line-height: normal;
+  line-height: 12px;
   font-family: ${({ theme }) => theme.fonts.regular};
   color: ${({ theme }) => theme.colors.textAuxiliary0};
   flex: 1;
@@ -69,7 +69,7 @@ export const ItemName = styled.Text`
 
 export const ItemQty = styled.Text`
   font-size: 12px;
-  line-height: normal;
+  line-height: 12px;
   font-family: ${({ theme }) => theme.fonts.regular};
   color: ${({ theme }) => theme.colors.textAuxiliary0};
   /* width: 10%; */
@@ -77,7 +77,7 @@ export const ItemQty = styled.Text`
 
 export const ItemTotal = styled.Text`
   font-size: 12px;
-  line-height: normal;
+  line-height: 12px;
   font-family: ${({ theme }) => theme.fonts.regular};
   color: ${({ theme }) => theme.colors.textAuxiliary0};
   width: 25%;

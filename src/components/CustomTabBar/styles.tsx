@@ -22,7 +22,7 @@ export const Button = styled.TouchableOpacity<ButtonProps>`
   border: 0 solid ${({ theme }) => theme.colors.background2};
   border-top-color: ${({ theme, isFocused }) => theme.colors[isFocused ? "buttonHover" : "background2"]};
   border-top-width: 2px;
-  padding: 14px 0 28px;
+  padding: 14px 0 0;
 `;
 
 export const Label = styled.Text<LabelProps>`

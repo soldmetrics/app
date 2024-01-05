@@ -22,34 +22,33 @@ const AuthContext = createContext<AuthType>({
 
 export const useAuth = () => useContext(AuthContext);
 
-function useProtectedRoute(user: any, isReady: boolean) {
-  const segments = useSegments();
-  const router = useRouter();
+function useProtectedRoute(user: any, segments: any, isReady: boolean, router: any) {
+  const inAuthGroup = segments[0] === '(auth)' || segments[0] === 'onboarding';
 
-  useEffect(() => {
-    const inAuthGroup = segments[0] === '(auth)' || segments[0] === 'onboarding';
-
-    if (
-      !user &&
-      !inAuthGroup &&
-      isReady
-    ) {
-      router.replace('onboarding');
-    } else if (user && inAuthGroup) {
-      if (user?.company?.integrationKey) {
+  if (isReady) {
+    if (user && inAuthGroup) {
+      if (user?.company?.subscriptions[0]?.subscriptionId) {
         router.replace('dashboard');
       } else {
-        router.replace('registerIntegration');
+        router.replace('plans');
       }
     }
-  }, [user, segments]);
+
+    if (
+      (user && user?.company?.subscriptions[0].status !== 'ACTIVE' && !inAuthGroup) ||
+      (!user && !inAuthGroup)
+    ) {
+      router.replace('plans');
+    }
+  }
 }
 
 export function AuthProvider({ children }: { children: React.ReactNode | React.ReactNode[] }): JSX.Element {
   const [user, setUser] = useState<any | null>(null);
   const [resetPassword, setResetPassword] = useState<any | null>(null);
   const [isReady, setIsReady] = useState(false);
-  const dispath = useAppDispatch();
+  const segments = useSegments();
+  const router = useRouter();
 
   useEffect(() => {
     const abortController = new AbortController();
@@ -68,10 +67,9 @@ export function AuthProvider({ children }: { children: React.ReactNode | React.R
             signal: abortController.signal,
           });
 
-          console.log(result?.data);
-
           if (result?.data) {
             setUser(result?.data);
+            console.log('user: ', result?.data?.company?.subscriptions[0]);
           }
         }
 
@@ -81,6 +79,10 @@ export function AuthProvider({ children }: { children: React.ReactNode | React.R
           console.error('Data fetching cancelled');
         } else {
           console.error('🚀 ~ file: AuthProvider.tsx:72 ~ error:', error);
+          // @ts-ignore
+          if (error?.response?.status === 401) {
+            router.push('onboarding');
+          }
         }
       }
     };
@@ -89,16 +91,8 @@ export function AuthProvider({ children }: { children: React.ReactNode | React.R
   }, []);
 
   useEffect(() => {
-    const loadAsync = () => {
-      dispath(setAppIsReady(isReady));
-      // dispath(setFontsIsLoaded(fontsLoaded));
-      // dispath(setFontsIsError(!!fontError));
-    };
-
-    loadAsync();
-  }, [isReady]);
-
-  useProtectedRoute(user, isReady);
+    useProtectedRoute(user, segments, isReady, router);
+  }, [user, segments, isReady]);
 
   const authContext: AuthType = {
     user,

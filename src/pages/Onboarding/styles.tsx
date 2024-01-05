@@ -1,6 +1,7 @@
 import styled from "styled-components/native";
 import Carousel, { Pagination } from 'react-native-snap-carousel';
 import { Image } from "expo-image";
+import { Link } from "expo-router";
 
 export const Wrapper = styled.SafeAreaView`
   flex: 1;
